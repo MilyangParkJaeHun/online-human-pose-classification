@@ -1,4 +1,12 @@
-# reference : https://todayisbetterthanyesterday.tistory.com/51
+"""
+    random_forest.py
+    Author: Park Jaehun
+    Purpose
+        train random forest model to classify human pose
+        using human pose keypoints
+    Reference
+        https://todayisbetterthanyesterday.tistory.com/51
+"""
 import os
 import pandas as pd
 import numpy as np

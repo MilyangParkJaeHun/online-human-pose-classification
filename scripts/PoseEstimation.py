@@ -1,3 +1,11 @@
+"""
+    PoseEstimation.py
+    Author: Park Jaehun
+    Purpose
+        Class for estimating human pose.
+        Estimating human pose with a classification machine learning model
+        using human pose keypoints.
+"""
 import os
 import joblib
 

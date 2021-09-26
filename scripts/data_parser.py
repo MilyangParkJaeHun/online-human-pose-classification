@@ -1,3 +1,11 @@
+"""
+    data_parser.py
+    Author: Park Jaehun
+    Purpose
+        parse raw data collected from OpenPose ros package.
+        raw data format : [frame_id, pose_x, pose_y, pose_x, pose_y, ...]
+        parsed data format : [pose_id, pose_x, pose_y, pose_x, pose_y, ...]
+"""
 import os
 import sys
 import math

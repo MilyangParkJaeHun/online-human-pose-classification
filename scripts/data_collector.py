@@ -1,3 +1,10 @@
+"""
+    data_collector.py
+    Author: Park Jaehun
+    Purpose
+        collect raw data from OpenPose ros package.
+        raw data format : [frame_id, pose_x, pose_y, pose_x, pose_y, ...]
+"""
 #!/usr/bin/env python
 import roslib
 import rospkg
@@ -68,9 +75,6 @@ def callback(data):
         print('save')
         cv2.imwrite(os.path.join(out_img_path, '%d.jpg'%(frame_id)), frame)
         frame_id += 1
-    # else:
-        # print('no size')
-    
 
 def imageCallback(data):
     global frame
