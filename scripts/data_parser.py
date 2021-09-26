@@ -11,7 +11,6 @@ import sys
 import math
 import cv2
 import numpy as np
-from enum import Enum
 
 Pose = {"leftDown"  : 0,
         "leftUp"    : 1,
