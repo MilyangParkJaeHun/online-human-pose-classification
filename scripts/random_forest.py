@@ -20,7 +20,8 @@ Pose = {0: "leftDown",
         3: "rightUp",
         4: "twoDown",
         5: "twoUp",
-        6: "heart"}
+        6: "heart",
+        7: "normal"}
 
 points = ['Nose_x','Nose_y','RShoulder_x','RShoulder_y','RElbow_x','RElbow_y','RWrist_x','RWrist_y', \
         'LShoulder_x','LShoulder_y','LElbow_x','LElbow_y','LWrist_x','LWrist_y']

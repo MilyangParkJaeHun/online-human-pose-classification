@@ -13,7 +13,7 @@ import joblib
 # load trained model
 clf = joblib.load('test.pkl')
 
-Pose = ["leftDown","leftUp","rightDown","rightUp","twoDown","twoUp","heart"]
+Pose = ["leftDown","leftUp","rightDown","rightUp","twoDown","twoUp","heart", "normal"]
 
 points = ['Nose_x','Nose_y','RShoulder_x','RShoulder_y','RElbow_x','RElbow_y','RWrist_x','RWrist_y', \
         'LShoulder_x','LShoulder_y','LElbow_x','LElbow_y','LWrist_x','LWrist_y']
