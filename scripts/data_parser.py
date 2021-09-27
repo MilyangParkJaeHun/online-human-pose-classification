@@ -18,9 +18,10 @@ Pose = {"leftDown"  : 0,
         "rightUp"   : 3,
         "twoDown"   : 4,
         "twoUp"     : 5,
-        "heart"     : 6}
+        "heart"     : 6,
+        "normal"    : 7}
 
-data_dir_list = ['/home/park/DATA/pose_estimation/output', '/home/park/DATA/pose_estimation/output2']
+data_dir_list = ['/home/park/DATA/pose_estimation/output', '/home/park/DATA/pose_estimation/output2', '/home/park/DATA/pose_estimation/output3']
 
 class Pos():
     def __init__(self, x, y):
@@ -36,45 +37,49 @@ def isEven(num):
 def distance(a_x, a_y, b_x, b_y):
     return math.sqrt((a_x-b_x)**2 + (a_y-b_y)**2)
 
-def parse_line(line):
-    data = line[:-1].split(',')[1:]
-    data = [float(d) for d in data]
+class DataParser():
+    def parse_line(self, line):
+        data = line[:-1].split(',')[1:]
+        data = [float(d) for d in data]
 
-    neck_pos = Pos(data[2], data[3])
-    data = [data[i]-neck_pos.x if isEven(i) else data[i]-neck_pos.y for i in range(len(data))]
-    
-    # distance between neck(1) and midheap(8).
-    waist_len = distance(data[2], data[3], data[16], data[17])
-    waist_angle = -1*math.atan2(data[17], data[16]) + math.pi/2
+        return data
 
-    rotated_data = []
-    for i in range(9):
-        x = data[2*i]
-        y = data[2*i + 1]
+    def preprocess_data(self, data):
+        neck_pos = Pos(data[2], data[3])
+        data = [data[i]-neck_pos.x if isEven(i) else data[i]-neck_pos.y for i in range(len(data))]
+        
+        # distance between neck(1) and midheap(8).
+        waist_len = distance(data[2], data[3], data[16], data[17])
+        waist_angle = -1*math.atan2(data[17], data[16]) + math.pi/2
 
-        r_x = x * math.cos(waist_angle) - y * math.sin(waist_angle)
-        r_y = x * math.sin(waist_angle) + y * math.cos(waist_angle)
+        rotated_data = []
+        for i in range(9):
+            x = data[2*i]
+            y = data[2*i + 1]
 
-        rotated_data.append(r_x)
-        rotated_data.append(r_y)
+            r_x = x * math.cos(waist_angle) - y * math.sin(waist_angle)
+            r_y = x * math.sin(waist_angle) + y * math.cos(waist_angle)
 
-    data = [d / waist_len for d in rotated_data]
- 
-    return data
+            rotated_data.append(r_x)
+            rotated_data.append(r_y)
 
-def shift_pos(x, y):
-    size = 100
-    x_center = 320
-    y_center = 240
+        data = [d / waist_len for d in rotated_data]
 
-    return int(size*x + x_center), int(size*y + y_center)
+        return data
 
-def draw_data(data):
-    frame = np.zeros((480, 640, 3))
-    for i in range(9):
-        point = shift_pos(data[2*i], data[2*i+1])
-        cv2.line(frame, point, point, (255, 100, 100), 5)
-    return frame
+    def shift_pos(self, x, y):
+        size = 100
+        x_center = 320
+        y_center = 240
+
+        return int(size*x + x_center), int(size*y + y_center)
+
+    def draw_data(self, data):
+        frame = np.zeros((480, 640, 3))
+        for i in range(9):
+            point = self.shift_pos(data[2*i], data[2*i+1])
+            cv2.line(frame, point, point, (255, 100, 100), 5)
+        return frame
 
 if __name__ == '__main__':
     out_dir = 'output'
@@ -82,7 +87,10 @@ if __name__ == '__main__':
         os.makedirs(out_dir)
     out_fn = os.path.join(out_dir, 'pose.txt')
 
+    data_parser = DataParser()
     count = 0
+    if not os.path.exists(os.path.join(out_dir, 'img')):
+        os.makedirs(os.path.join(out_dir, 'img'))
     with open(out_fn, 'w') as out_file:
         print("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s"%
         ("pose",
@@ -96,17 +104,21 @@ if __name__ == '__main__':
         ), file=out_file)
 
         for data_dir in data_dir_list:
+            print("Processing path : %s ..."%(data_dir))
             for pose in Pose.keys():
                 print(pose)
-                # if not os.path.exists(os.path.join(out_dir, pose)):
-                    # os.makedirs(os.path.join(out_dir, pose))
                 in_fn = os.path.join(data_dir, '%s.txt'%(pose))
+                if not os.path.exists(in_fn):
+                    continue
+                if not os.path.exists(os.path.join(out_dir, pose)):
+                    os.makedirs(os.path.join(out_dir, pose))
                 with open(in_fn, 'r') as in_file:
                     while True:
                         line = in_file.readline()
                         if not line:
-                            break    
-                        d = parse_line(line)
+                            break
+                        d = data_parser.parse_line(line)
+                        d = data_parser.preprocess_data(d)
 
                         print("%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f"%
                         (Pose[pose],
@@ -117,5 +129,6 @@ if __name__ == '__main__':
                         d[10], d[11],
                         d[12], d[13],
                         d[14], d[15]), file=out_file)
-                        # cv2.imwrite(os.path.join(out_dir, 'img','%06d.png'%(count)), draw_data(d))
+                        cv2.imwrite(os.path.join(out_dir, 'img','%06d.png'%(count)), data_parser.draw_data(d))
                         count += 1
+            print("Done %s!!!"%(data_dir))
