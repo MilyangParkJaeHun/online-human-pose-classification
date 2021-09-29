@@ -7,6 +7,7 @@
         using human pose keypoints.
 """
 import os
+import random
 import joblib
  
 class PoseEstimation():
@@ -22,12 +23,16 @@ class PoseEstimation():
                      7: "normal"}
         self.points = ['Nose_x','Nose_y','RShoulder_x','RShoulder_y','RElbow_x','RElbow_y','RWrist_x','RWrist_y', \
                         'LShoulder_x','LShoulder_y','LElbow_x','LElbow_y','LWrist_x','LWrist_y']
+        self.color = [[random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)] for _ in range(len(self.Pose))]
     
     def predict(self, x):
         return self.clf.predict([x])[0]
 
     def to_str(self, index):
         return self.Pose[index]
+    
+    def pose_color(self, pose_idx):
+        return self.color[pose_idx]
 
 if __name__ == "__main__":
     pose_estimation = PoseEstimation()
