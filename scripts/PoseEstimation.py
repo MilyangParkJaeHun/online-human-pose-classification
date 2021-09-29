@@ -12,7 +12,7 @@ import joblib
  
 class PoseEstimation():
     def __init__(self):
-        self.clf = joblib.load('test.pkl')
+        self.clf = joblib.load('weights/test.pkl')
         self.Pose = {0: "leftDown",
                      1: "leftUp",
                      2: "rightDown",

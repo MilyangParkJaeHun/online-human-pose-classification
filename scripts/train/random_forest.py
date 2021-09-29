@@ -28,7 +28,7 @@ points = ['Nose_x','Nose_y','RShoulder_x','RShoulder_y','RElbow_x','RElbow_y','R
 
 os.getcwd()
 
-data = pd.read_csv("./output/pose.txt")
+data = pd.read_csv("../output/pose.txt")
 
 nData = data.shape[0]
 nVar = data.shape[1]
@@ -50,4 +50,4 @@ predict1 = clf.predict(test_x)
 print("accuracy : %.2f%%"%(accuracy_score(test_y,predict1)*100))
 
 # save trained model
-joblib.dump(clf, 'test.pkl')
+joblib.dump(clf, '../weights/test.pkl')

@@ -73,7 +73,7 @@ def callback(data):
     print(save_flag)
     if save_flag and hasattr(frame, 'shape'):
         print('save')
-        cv2.imwrite(os.path.join(out_img_path, '%d.jpg'%(frame_id)), frame)
+        cv2.imwrite(os.path.join(out_img_path, '%06d.jpg'%(frame_id)), frame)
         frame_id += 1
 
 def imageCallback(data):

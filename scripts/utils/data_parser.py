@@ -87,7 +87,7 @@ class DataParser():
         return frame
 
 if __name__ == '__main__':
-    out_dir = 'output'
+    out_dir = '../output'
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
     out_fn = os.path.join(out_dir, 'pose.txt')
