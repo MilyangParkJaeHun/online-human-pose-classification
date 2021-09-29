@@ -1,2 +1,2 @@
 # pose_estimation
-Estimate person pose.
+Estimate human pose.
