@@ -39,12 +39,14 @@ def distance(a_x, a_y, b_x, b_y):
 
 class DataParser():
     def parse_line(self, line):
-        data = line[:-1].split(',')[1:]
+        data = line[:-1].split(',')
         data = [float(d) for d in data]
+        data[0] = int(data[0])
 
-        return data
+        return data[0], data[1:]
 
     def preprocess_data(self, data):
+        # remove image file name
         neck_pos = Pos(data[2], data[3])
         data = [data[i]-neck_pos.x if isEven(i) else data[i]-neck_pos.y for i in range(len(data))]
         
@@ -65,6 +67,9 @@ class DataParser():
 
         data = [d / waist_len for d in rotated_data]
 
+        remove_kps = [17, 16, 3, 2]
+        for remove_kp in remove_kps:
+            del data[remove_kp]
         return data
 
     def shift_pos(self, x, y):
@@ -76,7 +81,7 @@ class DataParser():
 
     def draw_data(self, data):
         frame = np.zeros((480, 640, 3))
-        for i in range(9):
+        for i in range(7):
             point = self.shift_pos(data[2*i], data[2*i+1])
             cv2.line(frame, point, point, (255, 100, 100), 5)
         return frame
@@ -113,22 +118,24 @@ if __name__ == '__main__':
                 if not os.path.exists(os.path.join(out_dir, pose)):
                     os.makedirs(os.path.join(out_dir, pose))
                 with open(in_fn, 'r') as in_file:
+                    # cut column name line
+                    in_file.readline()
                     while True:
                         line = in_file.readline()
                         if not line:
                             break
-                        d = data_parser.parse_line(line)
+                        img_id, d = data_parser.parse_line(line)
                         d = data_parser.preprocess_data(d)
 
                         print("%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f"%
                         (Pose[pose],
                         d[0], d[1],
+                        d[2], d[3],
                         d[4], d[5],
                         d[6], d[7],
                         d[8], d[9],
                         d[10], d[11],
-                        d[12], d[13],
-                        d[14], d[15]), file=out_file)
+                        d[12], d[13]), file=out_file)
                         cv2.imwrite(os.path.join(out_dir, 'img','%06d.png'%(count)), data_parser.draw_data(d))
                         count += 1
             print("Done %s!!!"%(data_dir))
