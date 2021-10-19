@@ -1,5 +1,5 @@
 """
-    data_parser.py
+    data_handler.py
     Author: Park Jaehun
     Purpose
         parse raw data collected from OpenPose ros package.
@@ -35,9 +35,9 @@ def isEven(num):
     return (num+1)%2 
 
 def distance(a_x, a_y, b_x, b_y):
-    return math.sqrt((a_x-b_x)**2 + (a_y-b_y)**2)
+    return max(1., math.sqrt((a_x-b_x)**2 + (a_y-b_y)**2))
 
-class DataParser():
+class DataHandler():
     def parse_line(self, line):
         data = line[:-1].split(',')
         data = [float(d) for d in data]
@@ -79,11 +79,14 @@ class DataParser():
 
         return int(size*x + x_center), int(size*y + y_center)
 
-    def draw_data(self, data):
+    def draw_data(self, data, color=(255, 100, 100)):
+        print(color)
         frame = np.zeros((480, 640, 3))
+        cv2.line(frame, (320, 240), (320, 240), color, 5)
+        cv2.line(frame, (320, 340), (320, 340), color, 5)
         for i in range(7):
             point = self.shift_pos(data[2*i], data[2*i+1])
-            cv2.line(frame, point, point, (255, 100, 100), 5)
+            cv2.line(frame, point, point, color, 5)
         return frame
 
 if __name__ == '__main__':
@@ -92,7 +95,7 @@ if __name__ == '__main__':
         os.makedirs(out_dir)
     out_fn = os.path.join(out_dir, 'pose.txt')
 
-    data_parser = DataParser()
+    data_handler = DataHandler()
     count = 0
     if not os.path.exists(os.path.join(out_dir, 'img')):
         os.makedirs(os.path.join(out_dir, 'img'))
@@ -124,8 +127,8 @@ if __name__ == '__main__':
                         line = in_file.readline()
                         if not line:
                             break
-                        img_id, d = data_parser.parse_line(line)
-                        d = data_parser.preprocess_data(d)
+                        img_id, d = data_handler.parse_line(line)
+                        d = data_handler.preprocess_data(d)
 
                         print("%d,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f,%.4f"%
                         (Pose[pose],
@@ -136,6 +139,6 @@ if __name__ == '__main__':
                         d[8], d[9],
                         d[10], d[11],
                         d[12], d[13]), file=out_file)
-                        cv2.imwrite(os.path.join(out_dir, 'img','%06d.png'%(count)), data_parser.draw_data(d))
+                        cv2.imwrite(os.path.join(out_dir, 'img','%06d.png'%(count)), data_handler.draw_data(d))
                         count += 1
             print("Done %s!!!"%(data_dir))

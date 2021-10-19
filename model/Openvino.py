@@ -112,6 +112,8 @@ class Openvino():
         self.presenter = monitors.Presenter(args.utilization_monitors, 55,
                                     (round(frame_shape[1] / 4), round(frame_shape[0] / 8)))
         self.is_first_inference = True
+        self.prob_threshold = args.prob_threshold
+        self.raw_output_message = args.raw_output_message
 
     def inference(self, in_frame):
         if self.is_first_inference:
@@ -131,9 +133,9 @@ class Openvino():
             (poses, scores), frame_meta = results
             frame = frame_meta['frame']
             self.presenter.drawGraphs(frame)
-            frame = self.draw_poses(in_frame, poses, args.prob_threshold)
+            frame = self.draw_poses(in_frame, poses, self.prob_threshold)
 
-            if len(poses) and args.raw_output_message:
+            if len(poses) and self.raw_output_message:
                 self.print_raw_results(poses, scores)
 
             self.next_frame_id_to_show += 1
@@ -251,5 +253,5 @@ if __name__ == '__main__':
         key = cv2.waitKey(1)
         if key == ord('q'):
             break
-
+    cv2.destroyAllWindows()
     sys.exit(0)
