@@ -74,7 +74,7 @@ def build_argparser():
                             help='Optional. Number of threads to use for inference on CPU (including HETERO cases).')
 
     io_args = parser.add_argument_group('Input/output options')
-    io_args.add_argument('-no_show', '--no_show', help="Optional. Don't show output.", action='store_true')
+    io_args.add_argument('-show_on', '--show_on', help="Optional. Show output.", action='store_true')
     io_args.add_argument('-u', '--utilization_monitors', default='', type=str,
                          help='Optional. List of monitors to show initially.')
 
