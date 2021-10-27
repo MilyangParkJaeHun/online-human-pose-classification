@@ -115,6 +115,8 @@ class Openvino():
         self.prob_threshold = args.prob_threshold
         self.raw_output_message = args.raw_output_message
 
+        self.before_poses = np.empty(0)
+
     def inference(self, in_frame):
         if self.is_first_inference:
             self.is_first_inference = False
@@ -140,6 +142,7 @@ class Openvino():
 
             self.next_frame_id_to_show += 1
             
+            self.before_poses = poses
             return poses
 
         if self.hpe_pipeline.is_ready():
@@ -156,6 +159,9 @@ class Openvino():
         else:
             # Wait for empty request
             self.hpe_pipeline.await_any()
+    
+        frame = self.draw_poses(in_frame, self.before_poses, self.prob_threshold)
+        self.before_poses = np.empty(0)
         
         return []
 
