@@ -3,11 +3,12 @@
     Author: Park Jaehun
     Purpose
         ROS node for online human pose classification
+    Pub Topic Info
+        data type : Int16
+        name : /manta/vision/pose
 """
 #!/usr/bin/env python3
 
-# topic data type : Int16
-# topic name : /manta/vision/pose
 # pose list : /path/to/online_pose_classification/config
 
 import os
@@ -17,13 +18,13 @@ import cv2
 from typing import List
 from time import perf_counter
 
-POSE_ESTIMATION_PATH=os.environ["POSE_ESTIMATION_PATH"]
-sys.path.append(POSE_ESTIMATION_PATH)
+POSE_CLF_PATH=os.environ["POSE_CLF_PATH"]
+sys.path.append(POSE_CLF_PATH)
 
-from model.Openvino import Openvino
-from model.Openvino import build_argparser as openvino_args
-from PoseEstimation import PoseEstimation
-from utils.data_handler import DataHandler
+from kps_extraction.Openvino import Openvino
+from kps_extraction.Openvino import build_argparser as openvino_args
+from kps_extraction.data_handler import DataHandler
+from pose_classification.pose_classifier import PoseClassifier
 
 import rospy
 from std_msgs.msg import Int16
@@ -77,7 +78,7 @@ def main(pub: rospy.Publisher) -> None:
     """
     Run main loop
     1. Get camera frame
-    2. Estimate human keypoints
+    2. Extract human keypoints
     3. Classify human pose.
     4. Publish most detected human pose.
     """
@@ -92,10 +93,15 @@ def main(pub: rospy.Publisher) -> None:
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, cap_width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, cap_height)
 
-    model = Openvino(args, [cap_height, cap_width])
-    classification_model = os.path.join(POSE_ESTIMATION_PATH, "weights", "test.pkl")
-    pose_classifier = PoseEstimation(model_path=classification_model)
+    # Create human keypoints extractor instance
+    kps_extractor = Openvino(args, [cap_height, cap_width])
+
+    # Create human keypoints data handler instance
     data_handler = DataHandler()
+
+    # Create human pose classifier
+    clf_weights = os.path.join(POSE_CLF_PATH, "pose_classification","weights", "test.pkl")
+    pose_classifier = PoseClassifier(model_path=clf_weights)
 
     pose_msgs = Int16()
     pose_buf = [0] * 8
@@ -106,10 +112,9 @@ def main(pub: rospy.Publisher) -> None:
         if not ret:
             break
         
-        kps_list = model.inference(frame)
+        kps_list = kps_extractor.inference(frame)
         for kps in kps_list:
             if isNotValid(kps, prob_threshold):
-                print("is not valid")
                 continue
             kps = convert_to_openpose(kps)
             kps = data_handler.preprocess_data(kps)
@@ -131,7 +136,7 @@ def main(pub: rospy.Publisher) -> None:
                 cv2.putText(frame, pose_classifier.to_str(max_pose), (50, 50), cv2.FONT_HERSHEY_PLAIN, 1, (0, 0, 0), 2, cv2.LINE_AA)
 
         if show_on:
-            cv2.imshow('test', frame)
+            cv2.imshow('pose classification', frame)
             key = cv2.waitKey(1)
             if key == ord('q'):
                 break

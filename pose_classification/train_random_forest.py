@@ -1,5 +1,5 @@
 """
-    random_forest.py
+    train_random_forest.py
     Author: Park Jaehun
     Purpose
         train random forest model to classify human pose
@@ -13,6 +13,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 import joblib
+
+POSE_CLF_PATH = os.environ['POSE_CLF_PATH']
 
 Pose = {0: "leftDown",
         1: "leftUp",
@@ -28,7 +30,7 @@ points = ['Nose_x','Nose_y','RShoulder_x','RShoulder_y','RElbow_x','RElbow_y','R
 
 os.getcwd()
 
-data = pd.read_csv("../output/pose.txt")
+data = pd.read_csv(os.path.join(POSE_CLF_PATH, 'data', 'pose.txt'))
 
 nData = data.shape[0]
 nVar = data.shape[1]
@@ -50,4 +52,6 @@ predict1 = clf.predict(test_x)
 print("accuracy : %.2f%%"%(accuracy_score(test_y,predict1)*100))
 
 # save trained model
-joblib.dump(clf, '../weights/test.pkl')
+weights_name = 'pose_clf_20211027.pkl'
+model_path = os.path.join(POSE_CLF_PATH, 'pose_classification','weights', weights_name)
+joblib.dump(clf, model_path)

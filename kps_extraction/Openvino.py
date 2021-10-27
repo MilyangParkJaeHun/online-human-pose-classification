@@ -41,7 +41,7 @@ def build_argparser():
                       required=True, type=Path)
     args.add_argument('-at', '--architecture_type', help='Required. Specify model\' architecture type.',
                       type=str, required=True, choices=('ae', 'openpose'))
-    args.add_argument('-i', '--input', required=True,
+    args.add_argument('-i', '--input', required=True, type=int,
                       help='Required. An input to process. The input must be a single image, '
                            'a folder of images, video file or camera id.')
     args.add_argument('-d', '--device', default='CPU', type=str,
@@ -234,10 +234,11 @@ class Openvino():
 
 if __name__ == '__main__':
     args = build_argparser().parse_args()
+    input_stream = args.input
 
     cap_width = 640
     cap_height = 480
-    cap = cv2.VideoCapture(2)
+    cap = cv2.VideoCapture(input_stream)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, cap_width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, cap_height)
 

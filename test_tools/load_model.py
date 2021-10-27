@@ -9,8 +9,14 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import joblib
 
+import os
+import sys
+
+POSE_CLF_PATH=os.environ["POSE_CLF_PATH"]
+sys.path.append(POSE_CLF_PATH)
+
 # load trained model
-clf = joblib.load('test.pkl')
+clf = joblib.load(os.path.join(POSE_CLF_PATH, 'pose_classification', 'weights', 'test.pkl'))
 
 Pose = {0: "leftDown",
         1: "leftUp",
@@ -24,7 +30,7 @@ Pose = {0: "leftDown",
 points = ['Nose_x','Nose_y','RShoulder_x','RShoulder_y','RElbow_x','RElbow_y','RWrist_x','RWrist_y', \
         'LShoulder_x','LShoulder_y','LElbow_x','LElbow_y','LWrist_x','LWrist_y']
 
-data = pd.read_csv("./output/pose.txt")
+data = pd.read_csv(os.path.join(POSE_CLF_PATH, 'data', 'pose.txt'))
 
 X = data[points]
 y = data['pose']

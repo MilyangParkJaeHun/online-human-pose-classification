@@ -1,10 +1,10 @@
 """
-    PoseEstimation.py
+    pose_classifier.py
     Author: Park Jaehun
     Purpose
-        Class for estimating human pose.
+        Class for classifying human pose.
         Estimating human pose with a classification machine learning model
-        using human pose keypoints.
+        using human pose keypoints data.
 """
 import os
 import random
@@ -19,8 +19,11 @@ def build_argparser():
     args = parser.parse_args()
     return args
 
-class PoseEstimation():
-    def __init__(self, model_path='weights/test.pkl'):
+POSE_CLF_PATH = os.environ['POSE_CLF_PATH']
+default_model_path_ = os.path.join(POSE_CLF_PATH, 'pose_classification','weights','test.pkl')
+
+class PoseClassifier():
+    def __init__(self, model_path=default_model_path_):
         self.clf = joblib.load(model_path)
         self.Pose = {0: "leftDown",
                      1: "leftUp",
@@ -45,9 +48,9 @@ class PoseEstimation():
 
 if __name__ == "__main__":
     args = build_argparser()
-    pose_estimation = PoseEstimation(args.model)
+    pose_classifier = PoseClassifier(args.model)
 
     input_x = [0,-0.0807,-0.3684,-0.3501,-0.0325,-0.4590,0.4717,-0.4961,0.8472,0.3323,0.0079,0.4783,0.4129,0.6792,0.3512]
     answer = input_x[0]
     x = input_x[1:]
-    print("GT : %s\t Predict : %s"%(answer, pose_estimation.predict(x)))
+    print("GT : %s\t Predict : %s"%(answer, pose_classifier.predict(x)))

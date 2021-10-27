@@ -23,11 +23,6 @@ Pose = {"leftDown"  : 0,
 
 data_dir_list = ['/home/park/DATA/pose_estimation/output', '/home/park/DATA/pose_estimation/output2', '/home/park/DATA/pose_estimation/output3']
 
-class Pos():
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
 def rad_to_degree(rad):
     return rad / math.pi * 180
 
@@ -36,6 +31,11 @@ def isEven(num):
 
 def distance(a_x, a_y, b_x, b_y):
     return max(1., math.sqrt((a_x-b_x)**2 + (a_y-b_y)**2))
+
+class Pos():
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
 
 class DataHandler():
     def parse_line(self, line):

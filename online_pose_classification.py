@@ -13,10 +13,10 @@ from time import perf_counter
 
 import cv2
 
-from model.Openvino import Openvino
-from model.Openvino import build_argparser as openvino_args
-from PoseEstimation import PoseEstimation
-from utils.data_handler import DataHandler
+from kps_extraction.Openvino import Openvino
+from kps_extraction.Openvino import build_argparser as openvino_args
+from kps_extraction.data_handler import DataHandler
+from pose_classification.pose_classifier import PoseClassifier
 
 def convert_to_openpose(data):
     return [data[0][0], data[0][1],
@@ -59,8 +59,8 @@ if __name__ == "__main__":
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, cap_width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, cap_height)
 
-    model = Openvino(args, [cap_height, cap_width])
-    pose_classifier = PoseEstimation()
+    kps_extractor = Openvino(args, [cap_height, cap_width])
+    pose_classifier = PoseClassifier()
     data_handler = DataHandler()
 
     pose_buf = [0] * 8
@@ -71,7 +71,7 @@ if __name__ == "__main__":
         if not ret:
             break
         
-        kps_list = model.inference(frame)
+        kps_list = kps_extractor.inference(frame)
         for kps in kps_list:
             if isNotValid(kps, prob_threshold):
                 print("is not valid")
