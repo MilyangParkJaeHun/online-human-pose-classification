@@ -50,12 +50,12 @@ def find_max(buf):
 
 if __name__ == "__main__":
     args = openvino_args().parse_args()
-
+    input_stream = args.input
     prob_threshold = args.prob_threshold
 
     cap_width = 640
     cap_height = 480
-    cap = cv2.VideoCapture(2)
+    cap = cv2.VideoCapture(input_stream)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, cap_width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, cap_height)
 

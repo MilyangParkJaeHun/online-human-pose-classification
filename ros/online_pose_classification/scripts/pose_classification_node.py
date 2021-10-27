@@ -83,11 +83,12 @@ def main(pub: rospy.Publisher) -> None:
     """
     args = openvino_args().parse_args()
     show_on = args.show_on
+    input_stream = args.input
     prob_threshold = args.prob_threshold
 
     cap_width = 640
     cap_height = 480
-    cap = cv2.VideoCapture(2)
+    cap = cv2.VideoCapture(input_stream)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, cap_width)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, cap_height)
 
