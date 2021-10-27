@@ -1,0 +1,24 @@
+- index: 0
+  name : leftDown
+  side : left
+- index: 1
+  name : leftUp
+  side : left
+- index: 2
+  name : rightDown
+  side : right
+- index: 3
+  name : rightUp
+  side : right
+- index: 4
+  name : twoDown
+  side : both
+- index: 5
+  name : twoUp
+  side : both
+- index: 6
+  name : heart
+  side : both
+- index: 7
+  name : normal
+  side : both

@@ -8,22 +8,22 @@
         https://todayisbetterthanyesterday.tistory.com/51
 """
 import os
+import yaml
 import pandas as pd
+import joblib
+
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
-import joblib
 
 POSE_CLF_PATH = os.environ['POSE_CLF_PATH']
+yaml_fn_ = os.path.join(POSE_CLF_PATH, 'config', 'pose.yml')
 
-Pose = {0: "leftDown",
-        1: "leftUp",
-        2: "rightDown",
-        3: "rightUp",
-        4: "twoDown",
-        5: "twoUp",
-        6: "heart",
-        7: "normal"}
+Pose = dict()
+with open(yaml_fn_) as f:
+    data = yaml.load(f, Loader=yaml.FullLoader)
+    for d in data:
+        Pose[d['index']] = d['name']
 
 points = ['Nose_x','Nose_y','RShoulder_x','RShoulder_y','RElbow_x','RElbow_y','RWrist_x','RWrist_y', \
         'LShoulder_x','LShoulder_y','LElbow_x','LElbow_y','LWrist_x','LWrist_y']
