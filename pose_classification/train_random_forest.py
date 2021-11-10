@@ -22,8 +22,8 @@ yaml_fn_ = os.path.join(POSE_CLF_PATH, 'config', 'pose.yml')
 Pose = dict()
 with open(yaml_fn_) as f:
     data = yaml.load(f, Loader=yaml.FullLoader)
-    for d in data:
-        Pose[d['index']] = d['name']
+    for idx in data:
+        Pose[idx] = data[idx]['name']
 
 points = ['Nose_x','Nose_y','RShoulder_x','RShoulder_y','RElbow_x','RElbow_y','RWrist_x','RWrist_y', \
         'LShoulder_x','LShoulder_y','LElbow_x','LElbow_y','LWrist_x','LWrist_y']
