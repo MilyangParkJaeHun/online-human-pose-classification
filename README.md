@@ -24,7 +24,7 @@ $ ln -s /path/to/online-human-pose-classification/config .
 
 ## Build
 ```
-$ catkin_make -C ~/catkin_ws/src
+$ catkin_make -C ~/catkin_ws
 ```
 
 ## Run Demo
