@@ -68,9 +68,10 @@ def main(pub: rospy.Publisher) -> None:
     most_pose = 7
 
     start_time = perf_counter()
-    while True:
+    while not rospy.is_shutdown() and cap.isOpened():
         ret, frame = cap.read()
         if not ret:
+            rospy.loginfo("Could not read camera...")
             break
         
         online_pose_clf.inference(frame)
@@ -88,9 +89,10 @@ def main(pub: rospy.Publisher) -> None:
             cv2.imshow('pose classification', frame)
             key = cv2.waitKey(1)
             if key == ord('q'):
+                cv2.destroyAllWindows()
                 break
-
-    cv2.destroyAllWindows()
+                
+    cap.release()
 
 if __name__ == "__main__":
     rospy.init_node('oneline_pose_classification_node', anonymous=True)
@@ -99,5 +101,6 @@ if __name__ == "__main__":
 
     try:
         main(pub)
-    except rospy.ROSInterruptException:
         sys.exit(0)
+    except rospy.ROSInterruptException:
+        sys.exit(1)
