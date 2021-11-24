@@ -147,13 +147,18 @@ class OnlinePoseClassfier():
 
     def find_most(self) -> int:
         """
-        Find the most detected poses.
+        Find the most detected pose except normal pose.
+        normal pose index is always last index of pose_buf.
         """
+        normal_pose = len(self.pose_buf) - 1
         most_pose = 0
-        for i in range(len(self.pose_buf)):
+        for i in range(len(self.pose_buf) - 1):
             if self.pose_buf[most_pose] <= self.pose_buf[i]:
                 most_pose = i
-        return most_pose
+
+        if self.pose_buf[most_pose] > 0:
+            return most_pose
+        return normal_pose
 
 if __name__ == "__main__":
     args = build_argparser().parse_args()

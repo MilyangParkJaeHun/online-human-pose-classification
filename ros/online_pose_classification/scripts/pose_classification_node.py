@@ -74,6 +74,9 @@ def main(pub: rospy.Publisher) -> None:
             rospy.loginfo("Could not read camera...")
             break
         
+        frame = cv2.flip(frame, 0)
+        frame = cv2.flip(frame, 1)
+
         online_pose_clf.inference(frame)
 
         if perf_counter() - start_time > interval:
