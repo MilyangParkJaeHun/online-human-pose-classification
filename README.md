@@ -3,16 +3,14 @@ Online inference for human pose classification
 
 ## Set Environment Variable
 ```
-$ export OPENVINO_PATH=/opt/intel/openvino/deployment_tools/inference_engine/demos/common/python
 $ export POSE_CLF_PATH=/path/to/online-human-pose-classification
 ```
 
 ## Demo Environments
-- Ubuntu 20.04
-- ROS noetic
-- OpenCV 4.5.2
-- OpenVINO 2021.3.394
-- scikit-learn 0.24.1
+- Ubuntu 18.04
+- ROS melodic
+- OpenCV 3.4.2
+- scikit-learn 0.24.2
 
 ## Create Symbolic Link for ROS
 ```
@@ -29,16 +27,11 @@ $ catkin_make -C ~/catkin_ws
 
 ## Run Demo
 ```
+$ roslaunch openpose_ros openpose_ros.launch
 $ rosrun online_pose_classification pose_classification_node.py \
-	-d CPU \
-	-i 2 \
-	-em /opt/intel/openvino_2021.3.394/deployment_tools/open_model_zoo/tools/downloader/intel/human-pose-estimation-0005/FP16/human-pose-estimation-0005.xml \
-	-cm /home/openvino/online-human-pose-classification/pose_classification/weights/pose_clf_20211027.pkl \
-	-at ae \
-	-t 0.1 \
-	-r \
-	--show_on
+       -i 2 \
+       -cm /home/whale/online-human-pose-classifition/pose_classification/weights/pose_clf_20211027.pkl \
+       -t 0.1 \
+       -r \
+       --show_on
 ```
-
-## Reference
-- https://docs.openvino.ai/latest/omz_demos_human_pose_estimation_demo_python.html
